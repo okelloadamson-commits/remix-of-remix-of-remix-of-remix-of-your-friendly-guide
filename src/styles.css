@@ -305,6 +305,17 @@
   z-index: 20;
 }
 
+/* Snake-around rainbow border for search bar */
+@property --search-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes search-snake-spin {
+  0% { --search-angle: 0deg; }
+  100% { --search-angle: 360deg; }
+}
+
 /* Neon agent welcome popup — SVG stroke draw-in + rainbow hue cycle */
 @keyframes neon-hue-spin {
   0% { filter: url(#neon-glow) hue-rotate(0deg); }
@@ -397,10 +408,11 @@
 
 
 
-/* Header search uses the exact moving rainbow border from Agent posters */
+/* Header search uses a snake-around rainbow border */
 .search-gradient-border {
   position: relative;
   border-radius: 9999px;
+  overflow: hidden;
 }
 .search-gradient-border::before {
   content: "";
@@ -408,9 +420,8 @@
   inset: 0;
   border-radius: 9999px;
   padding: 2px;
-  background: linear-gradient(90deg, #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff, #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff);
-  background-size: 300% 100%;
-  animation: agent-border-spin 4s linear infinite;
+  background: conic-gradient(from var(--search-angle), #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff, #ff3b6b);
+  animation: search-snake-spin 3s linear infinite;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
