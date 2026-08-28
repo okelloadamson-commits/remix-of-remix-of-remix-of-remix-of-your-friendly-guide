@@ -47,6 +47,7 @@ import AdminApps from "./pages/admin/AdminApps";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTransactions from "./pages/admin/AdminTransactions";
 import AdminActivities from "./pages/admin/AdminActivities";
+import AdminUserTransactions from "./pages/admin/AdminUserTransactions";
 import AdminRegisteredAgents from "./pages/admin/AdminRegisteredAgents";
 import AdminComedies from "./pages/admin/AdminComedies";
 import { GlobalClickTracker } from "./components/GlobalClickTracker";
@@ -140,6 +141,9 @@ const App = () => (
               </Route>
               <Route path="/admin/activities" element={<AdminDashboard />}>
                 <Route path="" element={<AdminActivities />} />
+              </Route>
+              <Route path="/admin/user-transactions" element={<AdminDashboard />}>
+                <Route path="" element={<AdminUserTransactions />} />
               </Route>
               <Route path="/admin/registered-agents" element={<AdminDashboard />}>
                 <Route path="" element={<AdminRegisteredAgents />} />
