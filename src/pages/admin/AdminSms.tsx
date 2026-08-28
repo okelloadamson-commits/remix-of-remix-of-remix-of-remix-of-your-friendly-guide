@@ -112,15 +112,9 @@ export default function AdminSms() {
         <Card className="bg-[#0d1e36] border-border/50">
           <CardContent className="p-6 space-y-4">
             <h2 className="font-semibold text-foreground">Send SMS manually</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground">Sender ID</label>
-                <Input value={senderId} onChange={(e) => setSenderId(e.target.value)} maxLength={11} />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Search users</label>
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, email or phone" />
-              </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Sender ID</label>
+              <Input value={senderId} onChange={(e) => setSenderId(e.target.value)} maxLength={11} />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">
