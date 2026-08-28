@@ -99,7 +99,7 @@ export default function AdminSms() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">SMS Notifications</h1>
           <p className="text-sm text-muted-foreground">
-            Subscribers are texted automatically when a new movie or episode is added.
+            Mark the users you want, write the message, then send. Nothing is sent automatically.
           </p>
         </div>
         <Button variant="outline" onClick={load} disabled={loading}>
