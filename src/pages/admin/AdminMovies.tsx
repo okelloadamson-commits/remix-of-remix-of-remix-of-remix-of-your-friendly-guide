@@ -111,7 +111,7 @@ export default function AdminMovies() {
         await updateMovie(editingMovie.id, dataToSave);
         toast({ title: "Movie updated successfully!" });
       } else {
-        const newId = await createMovie({ ...dataToSave, createdAt: Date.now(), views: 0 });
+        await createMovie({ ...dataToSave, createdAt: Date.now(), views: 0 });
         toast({ title: "Movie created successfully!" });
       }
       setDialogOpen(false);
