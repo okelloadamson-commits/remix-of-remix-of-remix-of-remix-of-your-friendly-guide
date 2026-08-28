@@ -56,18 +56,21 @@ export function Header() {
           </Link>
 
           {/* Search */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl transition-all rounded-lg">
-            <div className="relative">
-              <Search className="absolute left-2 lg:left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search movies, TV shows, adverts..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 lg:pl-10 pr-8 lg:pr-10 bg-input border-transparent text-foreground placeholder:text-muted-foreground h-9 lg:h-10 text-sm"
-              />
+          <form onSubmit={handleSearch} className="flex-1 max-w-xl">
+            <div className="search-gradient-border">
+              <div className="search-gradient-inner relative">
+                <Search className="absolute left-2 lg:left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground z-10" />
+                <Input
+                  type="text"
+                  placeholder="Search movies, TV shows, adverts..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-8 lg:pl-10 pr-8 lg:pr-10 bg-transparent border-transparent rounded-full text-foreground placeholder:text-muted-foreground h-9 lg:h-10 text-sm focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+              </div>
             </div>
           </form>
+
 
           {/* Actions */}
           <div className="flex items-center gap-1 lg:gap-2 flex-shrink-0">
