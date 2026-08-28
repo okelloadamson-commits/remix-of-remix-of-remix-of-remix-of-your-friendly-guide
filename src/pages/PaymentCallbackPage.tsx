@@ -11,7 +11,7 @@ import {
   parseCallbackParams 
 } from "@/lib/pesapal";
 import { activateSubscription } from "@/lib/subscription-service";
-import { saveTransaction } from "@/lib/admin-db";
+import { saveTransaction, saveUserTransaction } from "@/lib/admin-db";
 import { saveRegisteredAgent } from "@/lib/activity-tracker";
 
 
@@ -145,6 +145,27 @@ export default function PaymentCallbackPage() {
             });
           } catch (e) {
             console.error("Failed to save transaction:", e);
+          }
+
+          // Save to the User Transactions ledger — successful payments only,
+          // de-duplicated by payment reference.
+          if (success) {
+            try {
+              await saveUserTransaction({
+                userId: paymentData.userId,
+                userName: user.name || "Unknown",
+                userEmail: user.email || "",
+                phoneNumber: paymentData.phoneNumber,
+                planName: paymentData.planName,
+                amount: paymentData.amount,
+                orderId: paymentData.orderId,
+                orderTrackingId: callbackParams.orderTrackingId!,
+                confirmationCode: verification.confirmationCode,
+                createdAt: new Date(),
+              });
+            } catch (e) {
+              console.error("Failed to save user transaction:", e);
+            }
           }
 
           // Save agent registration ONLY for successful payments.
