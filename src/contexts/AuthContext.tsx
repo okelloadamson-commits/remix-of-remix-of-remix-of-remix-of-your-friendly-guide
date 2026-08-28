@@ -236,6 +236,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
+      // Stop Google One Tap from instantly signing the user back in
+      const gsi = (window as unknown as { google?: { accounts?: { id?: { disableAutoSelect?: () => void; cancel?: () => void } } } }).google;
+      gsi?.accounts?.id?.disableAutoSelect?.();
+      gsi?.accounts?.id?.cancel?.();
       await signOut(auth);
       setUser(null);
     } catch (error) {
