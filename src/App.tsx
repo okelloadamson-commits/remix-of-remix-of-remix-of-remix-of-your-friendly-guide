@@ -50,6 +50,7 @@ import AdminActivities from "./pages/admin/AdminActivities";
 import AdminRegisteredAgents from "./pages/admin/AdminRegisteredAgents";
 import AdminComedies from "./pages/admin/AdminComedies";
 import { GlobalClickTracker } from "./components/GlobalClickTracker";
+import GoogleOneTap from "./components/GoogleOneTap";
 import { WelcomeSplash } from "./components/WelcomeSplash";
 import { AgentMovieNotification } from "./components/AgentMovieNotification";
 
