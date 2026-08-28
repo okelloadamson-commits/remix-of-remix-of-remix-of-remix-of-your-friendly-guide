@@ -82,8 +82,11 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
   });
   txSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
-    if ((x.status || "") !== "success") return;
     addPhone(x.userId || "", x.userEmail || "", x.phoneNumber || "");
+  });
+  cbSnap?.forEach((d) => {
+    const x = d.data() as Record<string, string>;
+    addPhone(x.userId || "", x.userEmail || x.email || "", x.phoneNumber || x.phone || "");
   });
 
   const recipients: SmsRecipient[] = [];
