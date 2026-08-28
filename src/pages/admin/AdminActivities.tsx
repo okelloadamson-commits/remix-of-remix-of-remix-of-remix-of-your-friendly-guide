@@ -85,13 +85,8 @@ export default function AdminActivities() {
               className="pl-9 w-64 bg-[#0d1e36] border-border/50"
             />
           </div>
-          <Link to="/admin/user-transactions">
-            <Button size="sm" className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
-              <Receipt className="w-4 h-4 mr-2" />
-              User Transactions
-            </Button>
-          </Link>
           <Button
+
             variant="destructive"
             size="sm"
             onClick={async () => {
