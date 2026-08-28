@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -7,10 +8,10 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { initContentProtection } from "@/lib/content-protection";
+import { VersionChecker } from "@/components/VersionChecker";
 
 function NotFoundComponent() {
   return (
@@ -37,9 +38,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,21 +75,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Luo Ancient Movies - Stream and Download Luo translated Movies" },
+      { name: "description", content: "Wajoli kanongo film mabeco i leb luo i dwon vj mapol" },
+      { name: "author", content: "Luo Ancient Movies" },
+      { property: "og:title", content: "Luo Ancient Movies - Stream and Download Luo translated Movies" },
+      { property: "og:description", content: "Wajoli kanongo film mabeco i leb luo i dwon vj mapol" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "Luo Ancient Movies - Stream and Download Luo translated Movies" },
+      { name: "twitter:description", content: "Wajoli kanongo film mabeco i leb luo i dwon vj mapol" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61bd7e82-9305-4770-b37a-d461a288f617" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/61bd7e82-9305-4770-b37a-d461a288f617" },
     ],
     links: [
       {
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "icon", href: "/luo-ancient-logo.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/luo-ancient-logo.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -100,7 +103,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
+function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -117,9 +120,31 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    initContentProtection();
+
+    // Register service worker for PWA install prompt.
+    // Skip in iframe / Lovable preview to avoid cache issues.
+    const isInIframe = (() => {
+      try { return window.self !== window.top; } catch { return true; }
+    })();
+    const host = window.location.hostname;
+    const isPreviewHost =
+      host.includes("id-preview--") ||
+      host.includes("lovableproject.com") ||
+      host.includes("lovable.app") && host.includes("-dev");
+
+    if (!isInIframe && !isPreviewHost && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    } else if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())).catch(() => {});
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <VersionChecker />
       <Outlet />
     </QueryClientProvider>
   );
