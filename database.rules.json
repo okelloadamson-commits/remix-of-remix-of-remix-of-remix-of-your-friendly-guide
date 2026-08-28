@@ -1,0 +1,67 @@
+{
+  "rules": {
+    "movies": { ".read": true, ".write": "auth != null", ".indexOn": ["createdAt", "isFeatured", "genre"] },
+    "series": { ".read": true, ".write": "auth != null", ".indexOn": ["createdAt", "isFeatured", "genre"] },
+    "episodes": { ".read": true, ".write": "auth != null", ".indexOn": ["createdAt", "seriesId"] },
+    "comedies": { ".read": true, ".write": "auth != null", ".indexOn": ["createdAt", "isFeatured"] },
+    "adverts": { ".read": true, ".write": "auth != null" },
+    "heroImages": { ".read": true, ".write": "auth != null" },
+    "apps": { ".read": true, ".write": "auth != null" },
+    "settings": { ".read": true, ".write": true },
+
+    "config": {
+      "notifications": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    },
+
+    "fcmTokens": {
+      ".read": "auth != null && auth.token.email === 'lightstarrecord@gmail.com'",
+      ".write": true,
+      "$token": {
+        ".read": true,
+        ".write": true,
+        ".validate": "newData.hasChildren(['createdAt']) || !newData.exists()"
+      }
+    },
+
+    "notificationsLog": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    "registeredAgents": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["timestamp"],
+      "$agentId": {
+        ".read": true,
+        ".write": true,
+        ".validate": "!newData.exists() || newData.hasChildren(['timestamp'])"
+      }
+    },
+
+    "downloadCounts": {
+      ".read": "auth != null && (auth.token.email === 'lightstarrecord@gmail.com')",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "$date": { ".validate": "newData.isNumber() && newData.val() >= 0" }
+      }
+    },
+    "downloadResetMarkers": {
+      ".read": "auth != null && auth.token.email === 'lightstarrecord@gmail.com'",
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        ".validate": "newData.isString()"
+      }
+    },
+    "userActivities": {
+      ".read": "auth != null && auth.token.email === 'lightstarrecord@gmail.com'",
+      ".write": "auth != null",
+      ".indexOn": ["timestamp"]
+    }
+  }
+}
