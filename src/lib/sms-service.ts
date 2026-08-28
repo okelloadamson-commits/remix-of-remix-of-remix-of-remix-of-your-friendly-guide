@@ -51,11 +51,22 @@ export function normalizeUgPhone(raw: string): string | null {
  * matched back to the user by id or email.
  */
 export async function getSmsRecipients(): Promise<SmsRecipient[]> {
-  const [usersSnap, userTxSnap, txSnap] = await Promise.all([
+  const [usersSnap, userTxSnap, txSnap, subsSnap, cbSnap] = await Promise.all([
     getDocs(collection(db, "users")),
     getDocs(collection(db, "userTransactions")).catch(() => null),
     getDocs(collection(db, "transactions")).catch(() => null),
+    getDocs(collection(db, "subscriptions")).catch(() => null),
+    getDocs(collection(db, "paymentCallbacks")).catch(() => null),
   ]);
+
+  // Active subscriptions from the subscriptions collection
+  const activeSubUsers = new Map<string, string>(); // userId -> plan
+  subsSnap?.forEach((d) => {
+    const x = d.data() as Record<string, any>;
+    const exp = x.expiresAt?.toDate ? x.expiresAt.toDate() : x.expiresAt ? new Date(x.expiresAt) : null;
+    const active = Boolean(x.isActive) && (!exp || exp.getTime() > Date.now());
+    if (active && x.userId) activeSubUsers.set(x.userId, x.plan || x.planName || "Active");
+  });
 
   const phoneByUser = new Map<string, string>();
   const phoneByEmail = new Map<string, string>();
