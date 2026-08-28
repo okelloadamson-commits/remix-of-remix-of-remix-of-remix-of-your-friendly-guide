@@ -101,13 +101,15 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
     if (!phone) return;
     const sub = data.subscription;
     const expiresAt = sub?.expiresAt?.toDate ? sub.expiresAt.toDate() : sub?.expiresAt ? new Date(sub.expiresAt) : null;
-    const subscribed = Boolean(sub?.isActive && (!expiresAt || expiresAt.getTime() > Date.now()));
+    const subscribed =
+      Boolean(sub?.isActive && (!expiresAt || expiresAt.getTime() > Date.now())) ||
+      activeSubUsers.has(d.id);
     recipients.push({
       userId: d.id,
-      name: data.name || "there",
+      name: data.name || data.displayName || "there",
       email: data.email || "",
       phone,
-      plan: sub?.plan,
+      plan: sub?.plan || activeSubUsers.get(d.id),
       subscribed,
     });
   });
