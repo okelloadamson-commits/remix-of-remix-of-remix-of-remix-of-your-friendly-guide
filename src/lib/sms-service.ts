@@ -204,25 +204,6 @@ export async function sendSms(
   return { sent: ok ? list.length : 0, failed: ok ? 0 : list.length, providerMessage };
 }
 
-/** Auto-notify subscribers when new content is published. */
-export async function notifyNewContent(params: {
-  kind: "movie" | "episode";
-  title: string;
-  link: string;
-  senderId?: string;
-}): Promise<{ sent: number; failed: number }> {
-  try {
-    const all = await getSmsRecipients();
-    const subs = all.filter((r) => r.subscribed);
-    if (subs.length === 0) return { sent: 0, failed: 0 };
-    const label = params.kind === "movie" ? "New movie" : "New episode";
-    const template = `Hi {name}, ${label} just added on Luo Ancient Movies: ${params.title}. Watch now: ${params.link}`;
-    const result = await sendSms(subs, template, { senderId: params.senderId, type: params.kind });
-    return { sent: result.sent, failed: result.failed };
-  } catch {
-    return { sent: 0, failed: 0 };
-  }
-}
 
 export function watchLinkForMovie(id: string) {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
