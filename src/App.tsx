@@ -65,6 +65,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <GlobalClickTracker />
+          <GoogleOneTap />
           <WelcomeSplash />
           <AgentMovieNotification />
 
