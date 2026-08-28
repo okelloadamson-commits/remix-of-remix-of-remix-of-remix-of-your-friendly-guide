@@ -417,15 +417,11 @@
 .search-gradient-border::before {
   content: "";
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 200%;
-  height: 200%;
+  inset: 0;
   border-radius: 9999px;
   padding: 2px;
-  background: conic-gradient(from 0deg, #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff, #ff3b6b);
+  background: conic-gradient(from var(--search-angle), #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff, #ff3b6b);
   animation: search-snake-spin 3s linear infinite;
-  transform-origin: center;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
