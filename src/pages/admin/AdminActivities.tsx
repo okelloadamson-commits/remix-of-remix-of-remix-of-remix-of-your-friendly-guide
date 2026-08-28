@@ -20,8 +20,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
-import { Receipt } from "lucide-react";
 
 const actionIcons: Record<string, React.ReactNode> = {
   click: <MousePointer className="w-4 h-4" />,
