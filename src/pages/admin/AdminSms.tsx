@@ -42,18 +42,10 @@ export default function AdminSms() {
     load();
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return recipients.filter((r) => {
-      if (subsOnly && !r.subscribed) return false;
-      if (!q) return true;
-      return (
-        r.name.toLowerCase().includes(q) ||
-        r.email.toLowerCase().includes(q) ||
-        r.phone.includes(q)
-      );
-    });
-  }, [recipients, search, subsOnly]);
+  const filtered = useMemo(
+    () => recipients.filter((r) => (subsOnly ? r.subscribed : true)),
+    [recipients, subsOnly],
+  );
 
   const toggle = (id: string) => {
     setSelected((prev) => {
