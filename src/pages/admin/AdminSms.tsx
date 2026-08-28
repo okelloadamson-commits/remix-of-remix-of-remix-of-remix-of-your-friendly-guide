@@ -186,7 +186,6 @@ export default function AdminSms() {
         {/* Recipients */}
         <Card className="bg-[#0d1e36] border-border/50">
           <CardContent className="p-6">
-            <h2 className="font-semibold text-foreground mb-4">
             <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
               <h2 className="font-semibold text-foreground">
                 Users with phone numbers ({filtered.length})
