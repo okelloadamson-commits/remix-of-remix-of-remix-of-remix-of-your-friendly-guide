@@ -26,8 +26,7 @@ export default function AdminSms() {
     "Hi {name}, new content just landed on Luo Ancient Movies. Watch now: ",
   );
   const [senderId, setSenderId] = useState(DEFAULT_SENDER_ID);
-  const [search, setSearch] = useState("");
-  const [subsOnly, setSubsOnly] = useState(true);
+  const [subsOnly, setSubsOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
 
