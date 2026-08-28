@@ -17,11 +17,14 @@ import {
   type SmsRecipient,
 } from "@/lib/sms-service";
 
+const HIDDEN_KEY = "sms-hidden-recipients";
+
 export default function AdminSms() {
   const { toast } = useToast();
   const [recipients, setRecipients] = useState<SmsRecipient[]>([]);
   const [logs, setLogs] = useState<SmsLog[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [message, setMessage] = useState(
     "Hi {name}, new content just landed on Luo Ancient Movies. Watch now: ",
   );
@@ -39,13 +42,53 @@ export default function AdminSms() {
   };
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(HIDDEN_KEY);
+      if (raw) setHidden(new Set(JSON.parse(raw) as string[]));
+    } catch {
+      /* ignore */
+    }
     load();
   }, []);
 
+  const persistHidden = (next: Set<string>) => {
+    setHidden(next);
+    try {
+      localStorage.setItem(HIDDEN_KEY, JSON.stringify([...next]));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const removeRecipient = (id: string) => {
+    const next = new Set(hidden);
+    next.add(id);
+    persistHidden(next);
+    setSelected((prev) => {
+      const s = new Set(prev);
+      s.delete(id);
+      return s;
+    });
+  };
+
+  const clearAllRecipients = () => {
+    if (!confirm("Remove all users from the SMS list?")) return;
+    persistHidden(new Set(recipients.map((r) => r.userId)));
+    setSelected(new Set());
+  };
+
+  const restoreRecipients = () => {
+    persistHidden(new Set());
+  };
+
   const filtered = useMemo(
-    () => recipients.filter((r) => (subsOnly ? r.subscribed : true)),
-    [recipients, subsOnly],
+    () =>
+      recipients.filter(
+        (r) => !hidden.has(r.userId) && (subsOnly ? r.subscribed : true),
+      ),
+    [recipients, subsOnly, hidden],
   );
+
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -143,32 +186,55 @@ export default function AdminSms() {
         {/* Recipients */}
         <Card className="bg-[#0d1e36] border-border/50">
           <CardContent className="p-6">
-            <h2 className="font-semibold text-foreground mb-4">
-              Users with phone numbers ({filtered.length})
-            </h2>
+            <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
+              <h2 className="font-semibold text-foreground">
+                Users with phone numbers ({filtered.length})
+              </h2>
+              <div className="flex items-center gap-2">
+                {hidden.size > 0 && (
+                  <Button size="sm" variant="outline" onClick={restoreRecipients}>
+                    Restore removed ({hidden.size})
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  onClick={clearAllRecipients}
+                  disabled={filtered.length === 0}
+                >
+                  <Trash2 className="w-4 h-4 mr-2" /> Clear all
+                </Button>
+              </div>
+            </div>
             <div className="max-h-[420px] overflow-y-auto divide-y divide-border/40">
               {filtered.map((r) => (
-                <label key={r.userId} className="flex items-center gap-3 py-3 cursor-pointer">
-                  <Checkbox checked={selected.has(r.userId)} onCheckedChange={() => toggle(r.userId)} />
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-foreground truncate">{r.name}</span>
-                      {r.subscribed ? (
-                        <Badge className="bg-green-600 text-white">{r.plan || "Active"}</Badge>
-                      ) : (
-                        <Badge variant="secondary">No sub</Badge>
-                      )}
+                <div key={r.userId} className="flex items-center gap-3 py-3">
+                  <label className="flex items-center gap-3 min-w-0 flex-1 cursor-pointer">
+                    <Checkbox checked={selected.has(r.userId)} onCheckedChange={() => toggle(r.userId)} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-foreground truncate">{r.name}</span>
+                        {r.subscribed ? (
+                          <Badge className="bg-green-600 text-white">{r.plan || "Active"}</Badge>
+                        ) : (
+                          <Badge variant="secondary">No sub</Badge>
+                        )}
+                      </div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {r.phone} · {r.email || "no email"}
+                      </div>
                     </div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {r.phone} · {r.email || "no email"}
-                    </div>
-                  </div>
-                </label>
+                  </label>
+                  <Button size="icon" variant="ghost" onClick={() => removeRecipient(r.userId)}>
+                    <Trash2 className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
               ))}
               {filtered.length === 0 && !loading && (
-                <p className="text-sm text-muted-foreground py-6">No users match this filter.</p>
+                <p className="text-sm text-muted-foreground py-6">No users in the list.</p>
               )}
             </div>
+
           </CardContent>
         </Card>
       </div>
