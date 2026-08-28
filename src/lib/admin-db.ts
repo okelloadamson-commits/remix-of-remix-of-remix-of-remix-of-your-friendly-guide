@@ -526,3 +526,63 @@ export async function revokeGiftDayFromAllUsers(): Promise<number> {
   await setDoc(doc(db, "config", "giftDay"), { active: false, recipients: [] });
   return count;
 }
+// ============== USER TRANSACTIONS (successful payments only, de-duplicated) ==============
+export interface UserTransaction {
+  id?: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  phoneNumber: string;
+  planName: string;
+  amount: number;
+  orderId: string;
+  orderTrackingId: string;
+  confirmationCode?: string;
+  createdAt: Date;
+}
+
+// Doc id is derived from the payment reference, so re-visiting the callback
+// page (or a retry) can never create a duplicate record.
+function userTransactionDocId(tx: { orderTrackingId: string; orderId: string }) {
+  return (tx.orderTrackingId || tx.orderId).replace(/[/\s]/g, "_");
+}
+
+export async function saveUserTransaction(tx: Omit<UserTransaction, "id">): Promise<string> {
+  const id = userTransactionDocId(tx);
+  const docRef = doc(db, "userTransactions", id);
+  const existing = await getDoc(docRef);
+  if (existing.exists()) return id;
+  await setDoc(docRef, {
+    ...tx,
+    status: "success",
+    createdAt: Timestamp.fromDate(tx.createdAt),
+  });
+  return id;
+}
+
+export async function getUserTransactions(): Promise<UserTransaction[]> {
+  const snapshot = await getDocs(collection(db, "userTransactions"));
+  const list: UserTransaction[] = [];
+  snapshot.forEach((docSnap) => {
+    const data = docSnap.data();
+    list.push({
+      id: docSnap.id,
+      userId: data.userId || "",
+      userName: data.userName || "Unknown",
+      userEmail: data.userEmail || "",
+      phoneNumber: data.phoneNumber || "",
+      planName: data.planName || "",
+      amount: data.amount || 0,
+      orderId: data.orderId || "",
+      orderTrackingId: data.orderTrackingId || "",
+      confirmationCode: data.confirmationCode || "",
+      createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt),
+    });
+  });
+  list.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  return list;
+}
+
+export async function deleteUserTransaction(id: string): Promise<void> {
+  await deleteDoc(doc(db, "userTransactions", id));
+}
