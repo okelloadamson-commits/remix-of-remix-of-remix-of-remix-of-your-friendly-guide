@@ -396,3 +396,23 @@
 }
 
 
+
+/* Animated gradient border for the header search bar */
+@keyframes search-gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.search-gradient-border {
+  position: relative;
+  border-radius: 9999px;
+  padding: 2px;
+  background: linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899, #f59e0b, #06b6d4);
+  background-size: 300% 300%;
+  animation: search-gradient-move 6s linear infinite;
+}
+.search-gradient-border > .search-gradient-inner {
+  border-radius: 9999px;
+  background: hsl(var(--background));
+  overflow: hidden;
+}
