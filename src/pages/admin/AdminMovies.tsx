@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { getMovies, type Movie } from "@/lib/firebase-db";
 import { createMovie, updateMovie, deleteMovie } from "@/lib/admin-db";
+import { notifyNewContent, watchLinkForMovie } from "@/lib/sms-service";
 
 const CATEGORIES = ["trending", "popular"];
 const GENRES = ["Indian", "Action", "Sci-Fi", "Nigerian", "Horror", "Animation", "Comedy", "Romance", "Cartoon", "War", "Kung Fu", "Musical", "Fantasy", "Christian", "Magic", "Ghana", "Historical", "Drama"];
@@ -111,8 +112,15 @@ export default function AdminMovies() {
         await updateMovie(editingMovie.id, dataToSave);
         toast({ title: "Movie updated successfully!" });
       } else {
-        await createMovie({ ...dataToSave, createdAt: Date.now(), views: 0 });
+        const newId = await createMovie({ ...dataToSave, createdAt: Date.now(), views: 0 });
         toast({ title: "Movie created successfully!" });
+        notifyNewContent({
+          kind: "movie",
+          title: dataToSave.title || "New movie",
+          link: watchLinkForMovie(newId),
+        }).then((r) => {
+          if (r.sent > 0) toast({ title: `SMS sent to ${r.sent} subscriber(s)` });
+        });
       }
       setDialogOpen(false);
       resetForm();
