@@ -113,7 +113,6 @@ export default function AdminMovies() {
       } else {
         const newId = await createMovie({ ...dataToSave, createdAt: Date.now(), views: 0 });
         toast({ title: "Movie created successfully!" });
-        });
       }
       setDialogOpen(false);
       resetForm();

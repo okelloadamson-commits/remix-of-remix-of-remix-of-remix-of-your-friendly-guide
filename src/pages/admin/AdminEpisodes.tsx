@@ -95,7 +95,6 @@ export default function AdminEpisodes() {
       } else {
         await createEpisode({ ...submitData, createdAt: Date.now() });
         toast({ title: "Episode created successfully!" });
-        });
       }
       setDialogOpen(false);
       resetForm();
