@@ -413,6 +413,6 @@
 }
 .search-gradient-border > .search-gradient-inner {
   border-radius: 9999px;
-  background: hsl(var(--background));
+  background: var(--background);
   overflow: hidden;
 }
