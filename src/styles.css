@@ -305,6 +305,12 @@
   z-index: 20;
 }
 
+/* Snake-around rainbow border for search bar */
+@keyframes search-snake-spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 /* Neon agent welcome popup — SVG stroke draw-in + rainbow hue cycle */
 @keyframes neon-hue-spin {
   0% { filter: url(#neon-glow) hue-rotate(0deg); }
