@@ -12,6 +12,7 @@ import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSeries, type Series, type Episode } from "@/lib/firebase-db";
 import { createEpisode, updateEpisode, deleteEpisode, getAllEpisodes } from "@/lib/admin-db";
+import { notifyNewContent, watchLinkForSeries } from "@/lib/sms-service";
 
 export default function AdminEpisodes() {
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -95,6 +96,13 @@ export default function AdminEpisodes() {
       } else {
         await createEpisode({ ...submitData, createdAt: Date.now() });
         toast({ title: "Episode created successfully!" });
+        notifyNewContent({
+          kind: "episode",
+          title: `${submitData.title || "New episode"} (${seasonLabel}E${submitData.episodeNumber ?? ""})`,
+          link: watchLinkForSeries(String(submitData.seriesId || "")),
+        }).then((r) => {
+          if (r.sent > 0) toast({ title: `SMS sent to ${r.sent} subscriber(s)` });
+        });
       }
       setDialogOpen(false);
       resetForm();
