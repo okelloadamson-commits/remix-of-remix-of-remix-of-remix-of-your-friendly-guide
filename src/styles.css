@@ -306,9 +306,14 @@
 }
 
 /* Snake-around rainbow border for search bar */
+@property --search-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 @keyframes search-snake-spin {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
+  0% { --search-angle: 0deg; }
+  100% { --search-angle: 360deg; }
 }
 
 /* Neon agent welcome popup — SVG stroke draw-in + rainbow hue cycle */
