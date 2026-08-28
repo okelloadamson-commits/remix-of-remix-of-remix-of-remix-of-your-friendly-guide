@@ -397,16 +397,28 @@
 
 
 
-/* Header search uses the exact moving rainbow treatment from Agent posters */
+/* Header search uses the exact moving rainbow border from Agent posters */
 .search-gradient-border {
   position: relative;
+  border-radius: 9999px;
+}
+.search-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
   border-radius: 9999px;
   padding: 2px;
   background: linear-gradient(90deg, #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff, #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff);
   background-size: 300% 100%;
   animation: agent-border-spin 4s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 20;
 }
 .search-gradient-border > .search-gradient-inner {
+  position: relative;
   border-radius: 9999px;
   background: var(--background);
   overflow: hidden;
