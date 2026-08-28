@@ -26,8 +26,7 @@ export default function AdminSms() {
     "Hi {name}, new content just landed on Luo Ancient Movies. Watch now: ",
   );
   const [senderId, setSenderId] = useState(DEFAULT_SENDER_ID);
-  const [search, setSearch] = useState("");
-  const [subsOnly, setSubsOnly] = useState(true);
+  const [subsOnly, setSubsOnly] = useState(false);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
 
@@ -43,18 +42,10 @@ export default function AdminSms() {
     load();
   }, []);
 
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return recipients.filter((r) => {
-      if (subsOnly && !r.subscribed) return false;
-      if (!q) return true;
-      return (
-        r.name.toLowerCase().includes(q) ||
-        r.email.toLowerCase().includes(q) ||
-        r.phone.includes(q)
-      );
-    });
-  }, [recipients, search, subsOnly]);
+  const filtered = useMemo(
+    () => recipients.filter((r) => (subsOnly ? r.subscribed : true)),
+    [recipients, subsOnly],
+  );
 
   const toggle = (id: string) => {
     setSelected((prev) => {
@@ -108,7 +99,7 @@ export default function AdminSms() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">SMS Notifications</h1>
           <p className="text-sm text-muted-foreground">
-            Subscribers are texted automatically when a new movie or episode is added.
+            Mark the users you want, write the message, then send. Nothing is sent automatically.
           </p>
         </div>
         <Button variant="outline" onClick={load} disabled={loading}>
@@ -121,15 +112,9 @@ export default function AdminSms() {
         <Card className="bg-[#0d1e36] border-border/50">
           <CardContent className="p-6 space-y-4">
             <h2 className="font-semibold text-foreground">Send SMS manually</h2>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground">Sender ID</label>
-                <Input value={senderId} onChange={(e) => setSenderId(e.target.value)} maxLength={11} />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Search users</label>
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="name, email or phone" />
-              </div>
+            <div>
+              <label className="text-xs text-muted-foreground">Sender ID</label>
+              <Input value={senderId} onChange={(e) => setSenderId(e.target.value)} maxLength={11} />
             </div>
             <div>
               <label className="text-xs text-muted-foreground">

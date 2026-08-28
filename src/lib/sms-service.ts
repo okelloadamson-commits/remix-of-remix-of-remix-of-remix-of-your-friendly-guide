@@ -51,11 +51,22 @@ export function normalizeUgPhone(raw: string): string | null {
  * matched back to the user by id or email.
  */
 export async function getSmsRecipients(): Promise<SmsRecipient[]> {
-  const [usersSnap, userTxSnap, txSnap] = await Promise.all([
+  const [usersSnap, userTxSnap, txSnap, subsSnap, cbSnap] = await Promise.all([
     getDocs(collection(db, "users")),
     getDocs(collection(db, "userTransactions")).catch(() => null),
     getDocs(collection(db, "transactions")).catch(() => null),
+    getDocs(collection(db, "subscriptions")).catch(() => null),
+    getDocs(collection(db, "paymentCallbacks")).catch(() => null),
   ]);
+
+  // Active subscriptions from the subscriptions collection
+  const activeSubUsers = new Map<string, string>(); // userId -> plan
+  subsSnap?.forEach((d) => {
+    const x = d.data() as Record<string, any>;
+    const exp = x.expiresAt?.toDate ? x.expiresAt.toDate() : x.expiresAt ? new Date(x.expiresAt) : null;
+    const active = Boolean(x.isActive) && (!exp || exp.getTime() > Date.now());
+    if (active && x.userId) activeSubUsers.set(x.userId, x.plan || x.planName || "Active");
+  });
 
   const phoneByUser = new Map<string, string>();
   const phoneByEmail = new Map<string, string>();
@@ -71,8 +82,11 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
   });
   txSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
-    if ((x.status || "") !== "success") return;
     addPhone(x.userId || "", x.userEmail || "", x.phoneNumber || "");
+  });
+  cbSnap?.forEach((d) => {
+    const x = d.data() as Record<string, string>;
+    addPhone(x.userId || "", x.userEmail || x.email || "", x.phoneNumber || x.phone || "");
   });
 
   const recipients: SmsRecipient[] = [];
@@ -87,13 +101,15 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
     if (!phone) return;
     const sub = data.subscription;
     const expiresAt = sub?.expiresAt?.toDate ? sub.expiresAt.toDate() : sub?.expiresAt ? new Date(sub.expiresAt) : null;
-    const subscribed = Boolean(sub?.isActive && (!expiresAt || expiresAt.getTime() > Date.now()));
+    const subscribed =
+      Boolean(sub?.isActive && (!expiresAt || expiresAt.getTime() > Date.now())) ||
+      activeSubUsers.has(d.id);
     recipients.push({
       userId: d.id,
-      name: data.name || "there",
+      name: data.name || data.displayName || "there",
       email: data.email || "",
       phone,
-      plan: sub?.plan,
+      plan: sub?.plan || activeSubUsers.get(d.id),
       subscribed,
     });
   });
@@ -188,25 +204,6 @@ export async function sendSms(
   return { sent: ok ? list.length : 0, failed: ok ? 0 : list.length, providerMessage };
 }
 
-/** Auto-notify subscribers when new content is published. */
-export async function notifyNewContent(params: {
-  kind: "movie" | "episode";
-  title: string;
-  link: string;
-  senderId?: string;
-}): Promise<{ sent: number; failed: number }> {
-  try {
-    const all = await getSmsRecipients();
-    const subs = all.filter((r) => r.subscribed);
-    if (subs.length === 0) return { sent: 0, failed: 0 };
-    const label = params.kind === "movie" ? "New movie" : "New episode";
-    const template = `Hi {name}, ${label} just added on Luo Ancient Movies: ${params.title}. Watch now: ${params.link}`;
-    const result = await sendSms(subs, template, { senderId: params.senderId, type: params.kind });
-    return { sent: result.sent, failed: result.failed };
-  } catch {
-    return { sent: 0, failed: 0 };
-  }
-}
 
 export function watchLinkForMovie(id: string) {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
