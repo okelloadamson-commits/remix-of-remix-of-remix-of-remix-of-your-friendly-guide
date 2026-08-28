@@ -17,11 +17,14 @@ import {
   type SmsRecipient,
 } from "@/lib/sms-service";
 
+const HIDDEN_KEY = "sms-hidden-recipients";
+
 export default function AdminSms() {
   const { toast } = useToast();
   const [recipients, setRecipients] = useState<SmsRecipient[]>([]);
   const [logs, setLogs] = useState<SmsLog[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [message, setMessage] = useState(
     "Hi {name}, new content just landed on Luo Ancient Movies. Watch now: ",
   );
@@ -39,13 +42,53 @@ export default function AdminSms() {
   };
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(HIDDEN_KEY);
+      if (raw) setHidden(new Set(JSON.parse(raw) as string[]));
+    } catch {
+      /* ignore */
+    }
     load();
   }, []);
 
+  const persistHidden = (next: Set<string>) => {
+    setHidden(next);
+    try {
+      localStorage.setItem(HIDDEN_KEY, JSON.stringify([...next]));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const removeRecipient = (id: string) => {
+    const next = new Set(hidden);
+    next.add(id);
+    persistHidden(next);
+    setSelected((prev) => {
+      const s = new Set(prev);
+      s.delete(id);
+      return s;
+    });
+  };
+
+  const clearAllRecipients = () => {
+    if (!confirm("Remove all users from the SMS list?")) return;
+    persistHidden(new Set(recipients.map((r) => r.userId)));
+    setSelected(new Set());
+  };
+
+  const restoreRecipients = () => {
+    persistHidden(new Set());
+  };
+
   const filtered = useMemo(
-    () => recipients.filter((r) => (subsOnly ? r.subscribed : true)),
-    [recipients, subsOnly],
+    () =>
+      recipients.filter(
+        (r) => !hidden.has(r.userId) && (subsOnly ? r.subscribed : true),
+      ),
+    [recipients, subsOnly, hidden],
   );
+
 
   const toggle = (id: string) => {
     setSelected((prev) => {
