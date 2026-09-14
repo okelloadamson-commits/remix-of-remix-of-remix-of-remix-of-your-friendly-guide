@@ -177,6 +177,12 @@ export async function deleteSmsLog(id: string): Promise<void> {
   await deleteDoc(doc(db, "smsLogs", id));
 }
 
+/** Delete every sent-message record. */
+export async function clearSmsLogs(): Promise<void> {
+  const snap = await getDocs(collection(db, "smsLogs"));
+  await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, "smsLogs", d.id))));
+}
+
 /** Replace {name} in the template per recipient and send in one API call. */
 export async function sendSms(
   recipients: SmsRecipient[],
