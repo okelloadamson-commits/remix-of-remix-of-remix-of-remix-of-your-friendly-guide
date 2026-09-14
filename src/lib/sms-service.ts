@@ -16,7 +16,10 @@ export interface SmsRecipient {
   email: string;
   phone: string; // normalized 256XXXXXXXXX
   plan?: string;
+  /** Subscription currently active */
   subscribed: boolean;
+  /** Subscribed at some point, even if it has expired */
+  everSubscribed: boolean;
 }
 
 export interface SmsLog {
@@ -59,14 +62,27 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
     getDocs(collection(db, "paymentCallbacks")).catch(() => null),
   ]);
 
-  // Active subscriptions from the subscriptions collection
+  // Subscriptions collection: track both currently active and ever-subscribed
   const activeSubUsers = new Map<string, string>(); // userId -> plan
+  const everSubUsers = new Map<string, string>(); // userId -> plan (even expired)
+  const everSubEmails = new Set<string>();
   subsSnap?.forEach((d) => {
     const x = d.data() as Record<string, any>;
     const exp = x.expiresAt?.toDate ? x.expiresAt.toDate() : x.expiresAt ? new Date(x.expiresAt) : null;
     const active = Boolean(x.isActive) && (!exp || exp.getTime() > Date.now());
-    if (active && x.userId) activeSubUsers.set(x.userId, x.plan || x.planName || "Active");
+    const plan = x.plan || x.planName || "Subscribed";
+    if (x.userId) {
+      everSubUsers.set(x.userId, plan);
+      if (active) activeSubUsers.set(x.userId, plan);
+    }
+    if (x.userEmail || x.email) everSubEmails.add(String(x.userEmail || x.email).toLowerCase());
   });
+
+  // Anyone with a recorded payment has subscribed at least once
+  const markEverSub = (uid: string, email: string, plan?: string) => {
+    if (uid && !everSubUsers.has(uid)) everSubUsers.set(uid, plan || "Expired");
+    if (email) everSubEmails.add(email.toLowerCase());
+  };
 
   const phoneByUser = new Map<string, string>();
   const phoneByEmail = new Map<string, string>();
@@ -79,10 +95,14 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
   userTxSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
     addPhone(x.userId || "", x.userEmail || "", x.phoneNumber || "");
+    markEverSub(x.userId || "", x.userEmail || "", x.planName);
   });
   txSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
     addPhone(x.userId || "", x.userEmail || "", x.phoneNumber || "");
+    if ((x.status || "success") === "success") {
+      markEverSub(x.userId || "", x.userEmail || "", x.planName);
+    }
   });
   cbSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
@@ -104,13 +124,19 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
     const subscribed =
       Boolean(sub?.isActive && (!expiresAt || expiresAt.getTime() > Date.now())) ||
       activeSubUsers.has(d.id);
+    const everSubscribed =
+      subscribed ||
+      Boolean(sub?.plan) ||
+      everSubUsers.has(d.id) ||
+      (email ? everSubEmails.has(email) : false);
     recipients.push({
       userId: d.id,
       name: data.name || data.displayName || "there",
       email: data.email || "",
       phone,
-      plan: sub?.plan || activeSubUsers.get(d.id),
+      plan: sub?.plan || activeSubUsers.get(d.id) || everSubUsers.get(d.id),
       subscribed,
+      everSubscribed,
     });
   });
 
@@ -149,6 +175,12 @@ export async function getSmsLogs(): Promise<SmsLog[]> {
 
 export async function deleteSmsLog(id: string): Promise<void> {
   await deleteDoc(doc(db, "smsLogs", id));
+}
+
+/** Delete every sent-message record. */
+export async function clearSmsLogs(): Promise<void> {
+  const snap = await getDocs(collection(db, "smsLogs"));
+  await Promise.all(snap.docs.map((d) => deleteDoc(doc(db, "smsLogs", d.id))));
 }
 
 /** Replace {name} in the template per recipient and send in one API call. */
