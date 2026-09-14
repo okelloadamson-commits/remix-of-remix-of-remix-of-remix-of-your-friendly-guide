@@ -95,10 +95,14 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
   userTxSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
     addPhone(x.userId || "", x.userEmail || "", x.phoneNumber || "");
+    markEverSub(x.userId || "", x.userEmail || "", x.planName);
   });
   txSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
     addPhone(x.userId || "", x.userEmail || "", x.phoneNumber || "");
+    if ((x.status || "success") === "success") {
+      markEverSub(x.userId || "", x.userEmail || "", x.planName);
+    }
   });
   cbSnap?.forEach((d) => {
     const x = d.data() as Record<string, string>;
@@ -120,13 +124,19 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
     const subscribed =
       Boolean(sub?.isActive && (!expiresAt || expiresAt.getTime() > Date.now())) ||
       activeSubUsers.has(d.id);
+    const everSubscribed =
+      subscribed ||
+      Boolean(sub?.plan) ||
+      everSubUsers.has(d.id) ||
+      (email ? everSubEmails.has(email) : false);
     recipients.push({
       userId: d.id,
       name: data.name || data.displayName || "there",
       email: data.email || "",
       phone,
-      plan: sub?.plan || activeSubUsers.get(d.id),
+      plan: sub?.plan || activeSubUsers.get(d.id) || everSubUsers.get(d.id),
       subscribed,
+      everSubscribed,
     });
   });
 
