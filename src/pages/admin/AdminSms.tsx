@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, RefreshCw, Send, Trash2 } from "lucide-react";
 import {
   DEFAULT_SENDER_ID,
+  clearSmsLogs,
   deleteSmsLog,
   getSmsLogs,
   getSmsRecipients,
@@ -84,7 +85,7 @@ export default function AdminSms() {
   const filtered = useMemo(
     () =>
       recipients.filter(
-        (r) => !hidden.has(r.userId) && (subsOnly ? r.subscribed : true),
+        (r) => !hidden.has(r.userId) && (subsOnly ? r.everSubscribed : true),
       ),
     [recipients, subsOnly, hidden],
   );
@@ -134,6 +135,14 @@ export default function AdminSms() {
     if (!id) return;
     await deleteSmsLog(id);
     setLogs((prev) => prev.filter((l) => l.id !== id));
+  };
+
+  const handleClearLogs = async () => {
+    if (logs.length === 0) return;
+    if (!confirm("Delete all sent message records?")) return;
+    await clearSmsLogs();
+    setLogs([]);
+    toast({ title: "All sent messages cleared" });
   };
 
   return (
