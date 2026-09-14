@@ -16,7 +16,10 @@ export interface SmsRecipient {
   email: string;
   phone: string; // normalized 256XXXXXXXXX
   plan?: string;
+  /** Subscription currently active */
   subscribed: boolean;
+  /** Subscribed at some point, even if it has expired */
+  everSubscribed: boolean;
 }
 
 export interface SmsLog {
@@ -59,14 +62,27 @@ export async function getSmsRecipients(): Promise<SmsRecipient[]> {
     getDocs(collection(db, "paymentCallbacks")).catch(() => null),
   ]);
 
-  // Active subscriptions from the subscriptions collection
+  // Subscriptions collection: track both currently active and ever-subscribed
   const activeSubUsers = new Map<string, string>(); // userId -> plan
+  const everSubUsers = new Map<string, string>(); // userId -> plan (even expired)
+  const everSubEmails = new Set<string>();
   subsSnap?.forEach((d) => {
     const x = d.data() as Record<string, any>;
     const exp = x.expiresAt?.toDate ? x.expiresAt.toDate() : x.expiresAt ? new Date(x.expiresAt) : null;
     const active = Boolean(x.isActive) && (!exp || exp.getTime() > Date.now());
-    if (active && x.userId) activeSubUsers.set(x.userId, x.plan || x.planName || "Active");
+    const plan = x.plan || x.planName || "Subscribed";
+    if (x.userId) {
+      everSubUsers.set(x.userId, plan);
+      if (active) activeSubUsers.set(x.userId, plan);
+    }
+    if (x.userEmail || x.email) everSubEmails.add(String(x.userEmail || x.email).toLowerCase());
   });
+
+  // Anyone with a recorded payment has subscribed at least once
+  const markEverSub = (uid: string, email: string, plan?: string) => {
+    if (uid && !everSubUsers.has(uid)) everSubUsers.set(uid, plan || "Expired");
+    if (email) everSubEmails.add(email.toLowerCase());
+  };
 
   const phoneByUser = new Map<string, string>();
   const phoneByEmail = new Map<string, string>();
