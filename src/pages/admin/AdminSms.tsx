@@ -178,7 +178,7 @@ export default function AdminSms() {
             <div className="flex items-center gap-4">
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Checkbox checked={subsOnly} onCheckedChange={(v) => setSubsOnly(Boolean(v))} />
-                Subscribed users only
+                Subscribed users only (including expired)
               </label>
               <label className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Checkbox checked={allSelected} onCheckedChange={toggleAll} />
@@ -225,6 +225,8 @@ export default function AdminSms() {
                         <span className="font-medium text-foreground truncate">{r.name}</span>
                         {r.subscribed ? (
                           <Badge className="bg-green-600 text-white">{r.plan || "Active"}</Badge>
+                        ) : r.everSubscribed ? (
+                          <Badge className="bg-amber-600 text-white">Expired</Badge>
                         ) : (
                           <Badge variant="secondary">No sub</Badge>
                         )}
@@ -251,7 +253,17 @@ export default function AdminSms() {
       {/* Sent history */}
       <Card className="bg-[#0d1e36] border-border/50">
         <CardContent className="p-6">
-          <h2 className="font-semibold text-foreground mb-4">Sent messages ({logs.length})</h2>
+          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
+            <h2 className="font-semibold text-foreground">Sent messages ({logs.length})</h2>
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={handleClearLogs}
+              disabled={logs.length === 0}
+            >
+              <Trash2 className="w-4 h-4 mr-2" /> Clear all sent messages
+            </Button>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
