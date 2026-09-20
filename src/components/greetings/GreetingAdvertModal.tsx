@@ -203,7 +203,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
       const { redirectUrl, orderTrackingId: trackingId } = await initiatePesapalPayment({
         orderId: newOrderId,
         amount: GREETING_PRICE,
-        description: `Luo Ancient - ${GREETING_PLAN_NAME}`,
+        description: "Luo Ancient Greeting (Amotoment)",
         callbackUrl,
         ipnUrl,
         email: user.email,
