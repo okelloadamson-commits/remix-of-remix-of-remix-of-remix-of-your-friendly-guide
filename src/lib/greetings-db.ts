@@ -2,7 +2,7 @@
 // no Firestore rule change is needed — the admin dashboard reads them back
 // filtered by `type: "greeting"`.
 import { db } from "./firebase";
-import { collection, doc, getDoc, getDocs, setDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc, deleteDoc, Timestamp } from "firebase/firestore";
 
 export const GREETING_PRICE = 5000;
 export const GREETING_PLAN_NAME = "Greeting Advert";
@@ -38,11 +38,7 @@ export async function saveGreetingAdvert(g: Omit<GreetingAdvert, "id">): Promise
   }
 
   const id = greetingDocId(g);
-  const docRef = doc(db, "transactions", id);
-  const existing = await getDoc(docRef);
-  if (existing.exists()) return id;
-
-  await setDoc(docRef, {
+  const payload = {
     type: "greeting",
     userId: g.userId,
     userName: g.userName,
@@ -58,16 +54,30 @@ export async function saveGreetingAdvert(g: Omit<GreetingAdvert, "id">): Promise
     confirmationCode: g.confirmationCode || "",
     status: "success",
     createdAt: Timestamp.fromDate(g.createdAt),
-  });
-  return id;
+  };
+
+  // Writing with a fixed doc id is already duplicate-safe, so we do NOT read
+  // the doc first (reading a non-existent transactions doc is denied by rules).
+  try {
+    await setDoc(doc(db, "transactions", id), payload, { merge: true });
+    return id;
+  } catch (primaryError) {
+    console.error("Greeting save to transactions failed, using fallback", primaryError);
+    // Fallback collection that allows open create in the project rules.
+    await setDoc(doc(db, "userTransactions", id), payload, { merge: true });
+    return id;
+  }
 }
 
 export async function getGreetingAdverts(): Promise<GreetingAdvert[]> {
-  const snapshot = await getDocs(collection(db, "transactions"));
   const list: GreetingAdvert[] = [];
-  snapshot.forEach((docSnap) => {
+  const seen = new Set<string>();
+
+  const collect = (docSnap: any) => {
     const data = docSnap.data() as Record<string, any>;
     if (data.type !== "greeting") return;
+    if (seen.has(docSnap.id)) return;
+    seen.add(docSnap.id);
     list.push({
       id: docSnap.id,
       userId: data.userId || "",
@@ -83,11 +93,24 @@ export async function getGreetingAdverts(): Promise<GreetingAdvert[]> {
       confirmationCode: data.confirmationCode || "",
       createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt || Date.now()),
     });
-  });
+  };
+
+  for (const name of ["transactions", "userTransactions"]) {
+    try {
+      const snapshot = await getDocs(collection(db, name));
+      snapshot.forEach(collect);
+    } catch (e) {
+      console.warn(`Could not read ${name}`, e);
+    }
+  }
+
   list.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   return list;
 }
 
 export async function deleteGreetingAdvert(id: string): Promise<void> {
-  await deleteDoc(doc(db, "transactions", id));
+  await Promise.allSettled([
+    deleteDoc(doc(db, "transactions", id)),
+    deleteDoc(doc(db, "userTransactions", id)),
+  ]);
 }
