@@ -5,4 +5,4 @@
 - [x] Add Greeting Advert access to the desktop sidebar.
 - [x] Add paid Greetings to the admin dashboard and route.
 - [x] Verify successful payments save once and appear in admin Greetings; failed payments do not save.
-- [ ] Verify mobile and desktop layouts and current build health.
+- [x] Verify mobile and desktop layouts and current build health.
