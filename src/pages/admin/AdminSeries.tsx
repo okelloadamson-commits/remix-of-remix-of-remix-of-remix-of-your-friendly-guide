@@ -300,14 +300,6 @@ export default function AdminSeries() {
                   />
                   <Label htmlFor="isFeatured">Featured Series</Label>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="isLuoChampion"
-                    checked={formData.isLuoChampion}
-                    onCheckedChange={(checked) => setFormData({ ...formData, isLuoChampion: !!checked })}
-                  />
-                  <Label htmlFor="isLuoChampion" className="text-pink-500 font-semibold">Luo Champion</Label>
-                </div>
               </div>
 
               <div className="flex justify-end gap-2">
