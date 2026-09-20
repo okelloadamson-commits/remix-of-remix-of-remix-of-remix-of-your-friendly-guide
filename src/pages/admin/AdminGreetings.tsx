@@ -3,7 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Megaphone, RefreshCw, Trash2, MapPin, Phone, Mail } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Megaphone, RefreshCw, Trash2, MapPin, Phone, Mail, User, CalendarDays, ReceiptText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getGreetingAdverts, deleteGreetingAdvert, type GreetingAdvert } from "@/lib/greetings-db";
 
@@ -11,6 +18,7 @@ export default function AdminGreetings() {
   const [items, setItems] = useState<GreetingAdvert[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [selectedGreeting, setSelectedGreeting] = useState<GreetingAdvert | null>(null);
   const { toast } = useToast();
 
   const load = async () => {
@@ -117,7 +125,20 @@ export default function AdminGreetings() {
       ) : (
         <div className="space-y-3">
           {filtered.map((g) => (
-            <Card key={g.id} className="bg-[#0d1e36] border-border/50">
+            <Card
+              key={g.id}
+              role="button"
+              tabIndex={0}
+              aria-label={`View greeting from ${g.senderName || g.userName}`}
+              onClick={() => setSelectedGreeting(g)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedGreeting(g);
+                }
+              }}
+              className="bg-[#0d1e36] border-border/50 cursor-pointer transition-colors hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
               <CardContent className="p-5 space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -153,7 +174,15 @@ export default function AdminGreetings() {
                   <p className="text-[11px] text-muted-foreground font-mono">
                     {g.orderId} {g.confirmationCode ? `• ${g.confirmationCode}` : ""}
                   </p>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(g.id)}>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Delete greeting from ${g.senderName || g.userName}`}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDelete(g.id);
+                    }}
+                  >
                     <Trash2 className="w-4 h-4 text-destructive" />
                   </Button>
                 </div>
@@ -162,6 +191,82 @@ export default function AdminGreetings() {
           ))}
         </div>
       )}
+
+      <Dialog open={selectedGreeting !== null} onOpenChange={(open) => !open && setSelectedGreeting(null)}>
+        <DialogContent className="max-h-[90vh] w-[calc(100%-2rem)] max-w-xl overflow-y-auto border-primary/30 p-0">
+          {selectedGreeting && (
+            <>
+              <div className="border-b border-border bg-primary/10 px-6 py-5">
+                <DialogHeader>
+                  <div className="mb-2 flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                    <Megaphone className="h-5 w-5" />
+                  </div>
+                  <DialogTitle>Greeting Details</DialogTitle>
+                  <DialogDescription>
+                    Paid and received {selectedGreeting.createdAt.toLocaleString()}
+                  </DialogDescription>
+                </DialogHeader>
+              </div>
+
+              <div className="space-y-5 px-6 pb-6">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-lg border border-border bg-muted/30 p-4">
+                    <p className="mb-1 text-xs text-muted-foreground">Sender name</p>
+                    <p className="flex items-center gap-2 font-semibold text-foreground">
+                      <User className="h-4 w-4 text-primary" />
+                      {selectedGreeting.senderName || selectedGreeting.userName || "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-border bg-muted/30 p-4">
+                    <p className="mb-1 text-xs text-muted-foreground">Payment</p>
+                    <p className="font-semibold text-foreground">UGX {(selectedGreeting.amount || 0).toLocaleString()}</p>
+                    <p className="mt-1 text-xs text-primary">Successful</p>
+                  </div>
+                </div>
+
+                <div className="space-y-3 rounded-lg border border-border p-4">
+                  <p className="text-xs font-medium text-muted-foreground">Contact details</p>
+                  <p className="flex items-center gap-2 text-sm text-foreground">
+                    <MapPin className="h-4 w-4 text-primary" />{selectedGreeting.location || "—"}
+                  </p>
+                  <p className="flex items-center gap-2 text-sm text-foreground">
+                    <Phone className="h-4 w-4 text-primary" />{selectedGreeting.phoneNumber || "—"}
+                  </p>
+                  <p className="flex items-center gap-2 break-all text-sm text-foreground">
+                    <Mail className="h-4 w-4 shrink-0 text-primary" />{selectedGreeting.userEmail || "—"}
+                  </p>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-xs font-medium text-muted-foreground">People greeted</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedGreeting.greetingNames.length > 0 ? selectedGreeting.greetingNames.map((name, index) => (
+                      <span key={`${name}-${index}`} className="rounded-md bg-primary/15 px-3 py-1.5 text-sm font-medium text-primary">
+                        {name}
+                      </span>
+                    )) : <span className="text-sm text-muted-foreground">—</span>}
+                  </div>
+                </div>
+
+                <div className="space-y-3 rounded-lg border border-border bg-muted/20 p-4 text-sm">
+                  <div className="flex items-start gap-2">
+                    <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <div><p className="text-xs text-muted-foreground">Payment date</p><p className="text-foreground">{selectedGreeting.createdAt.toLocaleString()}</p></div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <ReceiptText className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <div className="min-w-0"><p className="text-xs text-muted-foreground">Order ID</p><p className="break-all font-mono text-xs text-foreground">{selectedGreeting.orderId || "—"}</p></div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <ReceiptText className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                    <div className="min-w-0"><p className="text-xs text-muted-foreground">Confirmation code</p><p className="break-all font-mono text-xs text-foreground">{selectedGreeting.confirmationCode || "—"}</p></div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

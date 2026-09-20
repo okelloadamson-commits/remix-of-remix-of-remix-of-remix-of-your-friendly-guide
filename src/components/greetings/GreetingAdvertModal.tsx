@@ -237,7 +237,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle className="text-2xl text-center">Login Required</DialogTitle>
-              <DialogDescription className="text-center">Please login to send a greeting advert</DialogDescription>
+              <DialogDescription className="text-center">Please login to send a greeting</DialogDescription>
             </DialogHeader>
             <div className="py-8 text-center space-y-4">
               <div className="w-20 h-20 rounded-full bg-primary/20 mx-auto flex items-center justify-center">

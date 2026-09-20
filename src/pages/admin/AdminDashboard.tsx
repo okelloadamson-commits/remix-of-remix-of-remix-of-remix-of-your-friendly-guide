@@ -46,7 +46,7 @@ const actionCards = [
   { title: "User Activities", description: "Track all user interactions", href: "/admin/activities", icon: BarChart3, color: "bg-indigo-500" },
   { title: "Registered Agents", description: "View and manage agent registrations", href: "/admin/registered-agents", icon: Shield, color: "bg-orange-600" },
   { title: "SMS Notifications", description: "Send SMS and view sent messages", href: "/admin/sms", icon: MessageSquare, color: "bg-emerald-500" },
-  { title: "Paid Greetings", description: "View successful greeting advert payments", href: "/admin/greetings", icon: Megaphone, color: "bg-amber-500" },
+  { title: "Greeting", description: "View successful greeting payments", href: "/admin/greetings", icon: Megaphone, color: "bg-amber-500" },
   { title: "Manage Users", description: "User management and permissions", href: "/admin/users", icon: Users, color: "bg-orange-500" },
 ];
 

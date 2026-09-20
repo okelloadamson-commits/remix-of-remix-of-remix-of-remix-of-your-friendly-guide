@@ -5,7 +5,7 @@ import { db } from "./firebase";
 import { collection, doc, getDocs, setDoc, deleteDoc, Timestamp } from "firebase/firestore";
 
 export const GREETING_PRICE = 5000;
-export const GREETING_PLAN_NAME = "Greeting Advert";
+export const GREETING_PLAN_NAME = "Greeting";
 
 export interface GreetingAdvert {
   id?: string;
