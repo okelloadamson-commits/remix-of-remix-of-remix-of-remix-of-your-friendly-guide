@@ -98,7 +98,7 @@ export function Sidebar() {
               className="nav-link nav-link-inactive w-full"
             >
               <Megaphone className="w-5 h-5" />
-              <span className="text-sm">Greeting Advert</span>
+              <span className="text-sm">Greeting</span>
             </button>
             
             {/* Admin Panel Link - only visible for admin */}
