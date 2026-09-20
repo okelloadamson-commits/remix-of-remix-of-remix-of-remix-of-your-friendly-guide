@@ -150,7 +150,7 @@ export function HeroBanner() {
               {current.data.subtitle && (
                 <p className="text-sm text-white/80 mb-1 drop-shadow-md font-bold">{current.data.subtitle}</p>
               )}
-              <p className="text-xs sm:text-sm mb-3 line-clamp-2 drop-shadow-lg font-semibold text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.7)' }}>{current.data.description}</p>
+              <p className="inline-block max-w-full rounded-md bg-background/70 px-3 py-1.5 text-xs sm:text-sm mb-3 line-clamp-2 font-bold text-foreground shadow-lg backdrop-blur-md">{current.data.description}</p>
               {current.data.linkUrl && (
                 <Link to={current.data.linkUrl}>
                   <Button size="sm" className="gradient-primary text-primary-foreground gap-1.5 h-8 px-4 text-xs">
@@ -171,7 +171,7 @@ export function HeroBanner() {
                 <span>{current.data.releaseYear}</span>
                 <span>{current.data.genre}</span>
               </div>
-              <p className="text-xs sm:text-sm mb-3 line-clamp-1 drop-shadow-lg font-semibold text-white" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.7)' }}>{current.data.description}</p>
+              <p className="inline-block max-w-full rounded-md bg-background/70 px-3 py-1.5 text-xs sm:text-sm mb-3 line-clamp-1 font-bold text-foreground shadow-lg backdrop-blur-md">{current.data.description}</p>
               <Link to={current.data.type === "series" ? `/watch/series/${current.data.id}` : `/watch/${current.data.id}`}>
                 <Button size="sm" className="gradient-primary text-primary-foreground gap-1.5 h-8 px-4 text-xs">
                   <Play className="w-3.5 h-3.5 fill-current" />
