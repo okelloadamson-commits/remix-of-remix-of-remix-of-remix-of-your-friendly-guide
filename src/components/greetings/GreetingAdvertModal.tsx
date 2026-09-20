@@ -124,7 +124,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
           if (completed) {
             stopPolling();
             try {
-              await saveGreetingAdvert({
+              const savedId = await saveGreetingAdvert({
                 userId: user?.id || "",
                 userName: user?.name || "Unknown",
                 userEmail: user?.email || "",
@@ -138,8 +138,13 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
                 confirmationCode: verification.confirmationCode,
                 createdAt: new Date(),
               });
+              if (!savedId) throw new Error("The verified greeting could not be saved");
             } catch (e) {
               console.error("Failed to save greeting advert:", e);
+              setStatusMessage("Your payment was successful, but we could not submit your greeting. Please contact support with your confirmation code.");
+              setConfirmationCode(verification.confirmationCode || null);
+              setStep("pending");
+              return;
             }
             setConfirmationCode(verification.confirmationCode || null);
             setStatusMessage("Your greeting has been sent to our team and will be aired soon!");

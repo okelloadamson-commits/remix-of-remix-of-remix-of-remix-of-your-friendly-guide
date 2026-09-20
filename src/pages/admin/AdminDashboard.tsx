@@ -20,7 +20,6 @@ import {
   Settings2,
   CreditCard,
   Shield,
-  Trophy,
   MessageSquare,
 } from "lucide-react";
 import luoAncientLogo from "@/assets/luo-ancient-logo.png";
@@ -40,7 +39,6 @@ const actionCards = [
   { title: "Upload Movies", description: "Add new movies to the platform", href: "/admin/movies", icon: Film, color: "bg-blue-500" },
   { title: "Upload Series", description: "Add new TV series", href: "/admin/series", icon: Tv, color: "bg-pink-500" },
   { title: "Upload Episodes", description: "Add episodes to existing series", href: "/admin/episodes", icon: PlayCircle, color: "bg-green-500" },
-  { title: "Upload Luo Champion", description: "Add Luo Champion videos", href: "/admin/comedies", icon: Trophy, color: "bg-pink-600" },
   { title: "Upload Apps", description: "Add mobile and desktop apps", href: "/admin/apps", icon: Download, color: "bg-purple-500" },
   { title: "Upload Adverts", description: "Manage promotional content", href: "/admin/adverts", icon: Megaphone, color: "bg-red-500" },
   { title: "Hero Images", description: "Manage homepage hero slider images", href: "/admin/hero-slides", icon: Image, color: "bg-cyan-500" },
@@ -48,6 +46,7 @@ const actionCards = [
   { title: "User Activities", description: "Track all user interactions", href: "/admin/activities", icon: BarChart3, color: "bg-indigo-500" },
   { title: "Registered Agents", description: "View and manage agent registrations", href: "/admin/registered-agents", icon: Shield, color: "bg-orange-600" },
   { title: "SMS Notifications", description: "Send SMS and view sent messages", href: "/admin/sms", icon: MessageSquare, color: "bg-emerald-500" },
+  { title: "Paid Greetings", description: "View successful greeting advert payments", href: "/admin/greetings", icon: Megaphone, color: "bg-amber-500" },
   { title: "Manage Users", description: "User management and permissions", href: "/admin/users", icon: Users, color: "bg-orange-500" },
 ];
 
