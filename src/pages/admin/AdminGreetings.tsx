@@ -41,6 +41,23 @@ export default function AdminGreetings() {
     }
   };
 
+  const [clearing, setClearing] = useState(false);
+  const handleClearAll = async () => {
+    if (items.length === 0) return;
+    if (!window.confirm(`Delete all ${items.length} greetings? This cannot be undone.`)) return;
+    setClearing(true);
+    try {
+      await Promise.all(items.map((g) => (g.id ? deleteGreetingAdvert(g.id) : Promise.resolve())));
+      setItems([]);
+      toast({ title: "All greetings cleared" });
+    } catch (error) {
+      console.error(error);
+      toast({ title: "Could not clear all greetings", variant: "destructive" });
+    } finally {
+      setClearing(false);
+    }
+  };
+
   const term = search.trim().toLowerCase();
   const filtered = term
     ? items.filter((i) =>
@@ -67,10 +84,16 @@ export default function AdminGreetings() {
             </p>
           </div>
         </div>
-        <Button variant="outline" onClick={load} disabled={loading}>
-          <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
-          Refresh
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={load} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <Button variant="destructive" onClick={handleClearAll} disabled={clearing || loading || items.length === 0}>
+            <Trash2 className="w-4 h-4 mr-2" />
+            {clearing ? "Clearing..." : "Clear all"}
+          </Button>
+        </div>
       </div>
 
       <Input

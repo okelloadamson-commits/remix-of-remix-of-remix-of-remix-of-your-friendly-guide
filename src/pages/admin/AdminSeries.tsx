@@ -7,7 +7,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Pencil, Trash2, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { getSeries, type Series } from "@/lib/firebase-db";
