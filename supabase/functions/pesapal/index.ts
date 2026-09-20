@@ -47,12 +47,9 @@ async function getPesapalToken(): Promise<{ token: string; baseUrl: string }> {
     }
   }
 
-  const consumerKey = Deno.env.get("PESAPAL_CONSUMER_KEY");
-  const consumerSecret = Deno.env.get("PESAPAL_CONSUMER_SECRET");
-
-  if (!consumerKey || !consumerSecret) {
-    throw new Error("Pesapal credentials not configured");
-  }
+  // Credentials configured directly in code (per project owner's request).
+  const consumerKey = "SmkIrFYBHVHjV3UV0LPRQ53GjSjvT+E2";
+  const consumerSecret = "z80OF+dxQauvy4smSMJvifIK/uc=";
 
   const errors: string[] = [];
   for (const baseUrl of [PESAPAL_LIVE_API_URL, PESAPAL_SANDBOX_API_URL]) {
