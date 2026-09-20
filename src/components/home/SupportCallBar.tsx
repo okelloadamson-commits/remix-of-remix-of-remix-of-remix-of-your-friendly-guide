@@ -14,8 +14,8 @@ export function SupportCallBar() {
   const [advertOpen, setAdvertOpen] = useState(false);
 
   return (
-    <div className="lg:hidden px-2 py-2">
-      <div className="mx-auto grid w-full max-w-md grid-cols-[minmax(0,1.35fr)_minmax(0,0.82fr)_minmax(0,0.9fr)] items-stretch gap-1.5">
+    <div className="lg:hidden px-3 py-2">
+      <div className="mx-auto grid w-full max-w-[480px] grid-cols-[minmax(0,1.35fr)_minmax(0,0.82fr)_minmax(0,0.9fr)] items-stretch gap-1.5">
         <a
           href={`tel:${SUPPORT_NUMBER}`}
           className="flex min-w-0 items-center justify-center gap-1 w-full px-1 py-2 rounded-lg border border-pink-500/40 bg-pink-500/10 active:opacity-70 transition-opacity"
