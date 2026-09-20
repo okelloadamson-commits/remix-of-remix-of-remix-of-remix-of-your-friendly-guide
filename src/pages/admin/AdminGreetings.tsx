@@ -241,7 +241,7 @@ export default function AdminGreetings() {
                   <p className="mb-2 text-xs font-medium text-muted-foreground">People greeted</p>
                   <div className="flex flex-wrap gap-2">
                     {selectedGreeting.greetingNames.length > 0 ? selectedGreeting.greetingNames.map((name, index) => (
-                      <span key={`${name}-${index}`} className="rounded-md bg-primary/15 px-3 py-1.5 text-sm font-medium text-primary">
+                      <span key={`${name}-${index}`} className="rounded-md bg-primary/15 px-3 py-1.5 text-sm font-medium text-white">
                         {name}
                       </span>
                     )) : <span className="text-sm text-muted-foreground">—</span>}
