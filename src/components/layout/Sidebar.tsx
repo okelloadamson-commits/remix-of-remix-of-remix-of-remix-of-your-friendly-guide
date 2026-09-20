@@ -118,14 +118,23 @@ export function Sidebar() {
 
         {/* Subscribe CTA */}
         <div className="p-4 border-t border-sidebar-border">
-          <div className="gradient-subscribe rounded-lg p-4 border border-primary/30">
-            <h3 className="text-sm font-semibold mb-2">Subscribe Now</h3>
-            <p className="text-xs text-muted-foreground mb-3">
-              Get unlimited access to all content
-            </p>
+          <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-red-600 via-red-500 to-orange-400 shadow-[0_12px_35px_rgba(220,38,38,0.35)] flex flex-col justify-between p-4 border border-white/10">
+            {/* Soft glow accents */}
+            <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/15 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-5 -left-5 w-20 h-20 bg-orange-300/25 rounded-full blur-xl pointer-events-none" />
+
+            <div className="relative z-10">
+              <h3 className="text-white text-lg font-bold leading-tight">
+                Subscribe<br />Now
+              </h3>
+              <p className="text-white/85 text-[11px] font-medium mt-1.5 leading-snug">
+                Get unlimited access to all content
+              </p>
+            </div>
+
             <button
               onClick={() => setSubscriptionOpen(true)}
-              className="block w-full bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-semibold py-2 rounded-lg text-center transition-colors"
+              className="relative z-10 block w-full bg-white text-red-600 hover:bg-red-50 text-sm font-bold py-2 rounded-xl text-center shadow-lg transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
               View Plans
             </button>
