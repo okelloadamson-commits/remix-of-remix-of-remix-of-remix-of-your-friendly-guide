@@ -264,7 +264,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
             <DialogHeader>
               <DialogTitle className="text-xl flex items-center gap-2">
                 <Megaphone className="w-5 h-5 text-amber-500" />
-                Send a Greeting Advert
+                Send a Greeting (Amotoment)
               </DialogTitle>
               <DialogDescription>
                 Fill in your details and list up to five people you want to greet. Costs UGX 5,000.
