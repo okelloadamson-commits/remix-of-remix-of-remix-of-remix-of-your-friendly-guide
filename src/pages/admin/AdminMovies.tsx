@@ -38,7 +38,6 @@ export default function AdminMovies() {
     displayCategories: [] as string[],
     isFeatured: false,
     isAgent: false,
-    isLuoChampion: false,
     vjName: "",
   });
 
@@ -67,7 +66,6 @@ export default function AdminMovies() {
       displayCategories: [],
       isFeatured: false,
       isAgent: false,
-      isLuoChampion: false,
       vjName: "",
     });
     setEditingMovie(null);
@@ -88,7 +86,6 @@ export default function AdminMovies() {
       displayCategories: movie.displayCategories || [],
       isFeatured: movie.isFeatured,
       isAgent: movie.isAgent || false,
-      isLuoChampion: movie.isLuoChampion || false,
       vjName: movie.vjName || "",
     });
     setDialogOpen(true);
@@ -321,14 +318,6 @@ export default function AdminMovies() {
                     onCheckedChange={(checked) => setFormData({ ...formData, isAgent: !!checked })}
                   />
                   <Label htmlFor="isAgent" className="text-orange-500 font-semibold">Agent Movie</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    id="isLuoChampion"
-                    checked={formData.isLuoChampion}
-                    onCheckedChange={(checked) => setFormData({ ...formData, isLuoChampion: !!checked })}
-                  />
-                  <Label htmlFor="isLuoChampion" className="text-pink-500 font-semibold">Luo Champion</Label>
                 </div>
               </div>
 

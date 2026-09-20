@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import luoAncientLogo from "@/assets/luo-ancient-logo.png";
 import { SubscriptionModal } from "@/components/subscription/SubscriptionModal";
+import { GreetingAdvertModal } from "@/components/greetings/GreetingAdvertModal";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useActivityTracker } from "@/hooks/useActivityTracker";
 
@@ -40,6 +41,7 @@ export function Sidebar() {
   const { isAdmin } = useAdmin();
   const { track } = useActivityTracker();
   const [subscriptionOpen, setSubscriptionOpen] = useState(false);
+  const [greetingOpen, setGreetingOpen] = useState(false);
 
   return (
     <>
@@ -89,6 +91,15 @@ export function Sidebar() {
                 </Link>
               );
             })}
+
+            <button
+              type="button"
+              onClick={() => setGreetingOpen(true)}
+              className="nav-link nav-link-inactive w-full"
+            >
+              <Megaphone className="w-5 h-5" />
+              <span className="text-sm">Greeting Advert</span>
+            </button>
             
             {/* Admin Panel Link - only visible for admin */}
             {isAdmin && (
@@ -123,6 +134,7 @@ export function Sidebar() {
       </aside>
 
       <SubscriptionModal open={subscriptionOpen} onOpenChange={setSubscriptionOpen} />
+      <GreetingAdvertModal open={greetingOpen} onOpenChange={setGreetingOpen} />
     </>
   );
 }

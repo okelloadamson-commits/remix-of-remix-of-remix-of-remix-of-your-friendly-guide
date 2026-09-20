@@ -51,6 +51,7 @@ import AdminUserTransactions from "./pages/admin/AdminUserTransactions";
 import AdminRegisteredAgents from "./pages/admin/AdminRegisteredAgents";
 import AdminComedies from "./pages/admin/AdminComedies";
 import AdminSms from "./pages/admin/AdminSms";
+import AdminGreetings from "./pages/admin/AdminGreetings";
 import { GlobalClickTracker } from "./components/GlobalClickTracker";
 import GoogleOneTap from "./components/GoogleOneTap";
 import { WelcomeSplash } from "./components/WelcomeSplash";
@@ -154,6 +155,9 @@ const App = () => (
               </Route>
               <Route path="/admin/sms" element={<AdminDashboard />}>
                 <Route path="" element={<AdminSms />} />
+              </Route>
+              <Route path="/admin/greetings" element={<AdminDashboard />}>
+                <Route path="" element={<AdminGreetings />} />
               </Route>
               
               
