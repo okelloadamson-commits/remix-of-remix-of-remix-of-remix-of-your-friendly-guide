@@ -49,6 +49,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
   const [step, setStep] = useState<PaymentStep>("plans");
   const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"mobile" | "card">("mobile");
   const [agentName, setAgentName] = useState("");
   const [agentBusiness, setAgentBusiness] = useState("");
   const [agentLocation, setAgentLocation] = useState("");
@@ -81,6 +82,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
     setStep("plans");
     setSelectedPlan(null);
     setPhoneNumber("");
+    setPaymentMethod("mobile");
     setAgentName("");
     setAgentBusiness("");
     setAgentLocation("");
@@ -270,9 +272,9 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
   }, [user, phoneNumber, stopPolling, agentOnly, agentName, agentBusiness, agentLocation]);
 
   const handlePayment = async () => {
-    const normalizedPhone = normalizeUgandaPhoneForPesapal(phoneNumber);
+    const normalizedPhone = paymentMethod === "card" ? "" : normalizeUgandaPhoneForPesapal(phoneNumber) ?? "";
 
-    if (!normalizedPhone) {
+    if (paymentMethod === "mobile" && !normalizedPhone) {
       toast({ title: "Invalid phone number", description: "Please enter a valid Uganda phone number", variant: "destructive" });
       return;
     }
@@ -490,10 +492,34 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
                 <p className={`text-2xl font-bold ${accentClass}`}>UGX {selectedPlan.priceDisplay}</p>
               </div>
               <div>
-                <label className="text-sm font-medium">Phone Number (Mobile Money)</label>
-                <Input type="tel" placeholder="e.g. 0771234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="text-lg mt-1" autoFocus />
-                <p className="text-xs text-muted-foreground mt-1">Enter your MTN MoMo or Airtel Money number</p>
+                <label className="text-sm font-medium">Payment Method</label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("mobile")}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-orange-500" : "border-primary bg-primary/10 text-primary") : "border-border text-muted-foreground hover:border-primary/50"}`}
+                  >
+                    Mobile Money
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("card")}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-orange-500" : "border-primary bg-primary/10 text-primary") : "border-border text-muted-foreground hover:border-primary/50"}`}
+                  >
+                    Card
+                  </button>
+                </div>
               </div>
+              {paymentMethod === "mobile" && (
+                <div>
+                  <label className="text-sm font-medium">Phone Number (Mobile Money)</label>
+                  <Input type="tel" placeholder="e.g. 0771234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="text-lg mt-1" autoFocus />
+                  <p className="text-xs text-muted-foreground mt-1">Enter your MTN MoMo or Airtel Money number</p>
+                </div>
+              )}
+              {paymentMethod === "card" && (
+                <p className="text-xs text-muted-foreground">You will enter your card details securely on the Pesapal checkout page.</p>
+              )}
               <Button onClick={handlePayment} className={`w-full ${isAgent ? "bg-orange-500 hover:bg-orange-600 text-white" : "gradient-primary"}`} size="lg">
                 Pay UGX {selectedPlan.priceDisplay}
               </Button>
