@@ -298,14 +298,14 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("mobile")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? "border-amber-500 bg-amber-500/10 text-amber-500" : "border-border text-muted-foreground hover:border-amber-500/50"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? "border-amber-500 bg-amber-500/10 text-white" : "border-border text-white/70 hover:border-amber-500/50 hover:text-white"}`}
                   >
                     Mobile Money
                   </button>
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("card")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? "border-amber-500 bg-amber-500/10 text-amber-500" : "border-border text-muted-foreground hover:border-amber-500/50"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? "border-amber-500 bg-amber-500/10 text-white" : "border-border text-white/70 hover:border-amber-500/50 hover:text-white"}`}
                   >
                     Card
                   </button>
