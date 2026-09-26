@@ -120,13 +120,9 @@ Deno.serve(async (req) => {
       const notificationUrl = typeof ipnUrl === "string" && ipnUrl ? ipnUrl : callbackUrl;
       const ipnId = await registerIPN(token, notificationUrl, baseUrl);
 
+      // Phone is optional: card payments go straight to the Pesapal checkout
+      // page where the customer enters their own details.
       const normalizedPhoneNumber = normalizeUgandaPhoneNumber(phoneNumber || "");
-      if (!normalizedPhoneNumber) {
-        return new Response(JSON.stringify({ error: "A valid Uganda phone number is required" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
 
       const orderRequest: Record<string, any> = {
         id: orderId,
@@ -137,7 +133,6 @@ Deno.serve(async (req) => {
         callback_url: callbackUrl,
         notification_id: ipnId,
         billing_address: {
-          phone_number: normalizedPhoneNumber,
           country_code: "UG",
           first_name: firstName || "",
           middle_name: "",
@@ -151,7 +146,10 @@ Deno.serve(async (req) => {
         },
       };
 
-      // Only include email if provided - phone_number is always required
+      // Only include phone/email when provided
+      if (normalizedPhoneNumber) {
+        orderRequest.billing_address.phone_number = normalizedPhoneNumber;
+      }
       if (email) {
         orderRequest.billing_address.email_address = email;
       }

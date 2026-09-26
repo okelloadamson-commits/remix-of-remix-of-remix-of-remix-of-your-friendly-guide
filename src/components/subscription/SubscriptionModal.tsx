@@ -497,14 +497,14 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("mobile")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-orange-500" : "border-primary bg-primary/10 text-primary") : "border-border text-muted-foreground hover:border-primary/50"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-white" : "border-primary bg-primary/10 text-white") : "border-border text-white/70 hover:border-primary/50 hover:text-white"}`}
                   >
                     Mobile Money
                   </button>
                   <button
                     type="button"
                     onClick={() => setPaymentMethod("card")}
-                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-orange-500" : "border-primary bg-primary/10 text-primary") : "border-border text-muted-foreground hover:border-primary/50"}`}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-white" : "border-primary bg-primary/10 text-white") : "border-border text-white/70 hover:border-primary/50 hover:text-white"}`}
                   >
                     Card
                   </button>
