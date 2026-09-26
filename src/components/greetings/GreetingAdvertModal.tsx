@@ -181,7 +181,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
       toast({ title: "Add names", description: "List at least one person to greet", variant: "destructive" });
       return;
     }
-    const normalizedPhone = paymentMethod === "mobile" ? normalizeUgandaPhone(phoneNumber) : (normalizeUgandaPhone(phoneNumber) || "");
+    const normalizedPhone = normalizeUgandaPhone(phoneNumber) ?? "";
     if (paymentMethod === "mobile" && !normalizedPhone) {
       toast({ title: "Invalid phone number", description: "Please enter a valid Uganda phone number", variant: "destructive" });
       return;
