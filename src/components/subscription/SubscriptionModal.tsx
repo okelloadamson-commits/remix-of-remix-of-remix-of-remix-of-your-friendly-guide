@@ -49,6 +49,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
   const [step, setStep] = useState<PaymentStep>("plans");
   const [selectedPlan, setSelectedPlan] = useState<typeof plans[0] | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"mobile" | "card">("mobile");
   const [agentName, setAgentName] = useState("");
   const [agentBusiness, setAgentBusiness] = useState("");
   const [agentLocation, setAgentLocation] = useState("");
@@ -81,6 +82,7 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
     setStep("plans");
     setSelectedPlan(null);
     setPhoneNumber("");
+    setPaymentMethod("mobile");
     setAgentName("");
     setAgentBusiness("");
     setAgentLocation("");
