@@ -58,6 +58,7 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
   const [location, setLocation] = useState("");
   const [names, setNames] = useState<string[]>(["", "", "", "", ""]);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"mobile" | "card">("mobile");
   const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [confirmationCode, setConfirmationCode] = useState<string | null>(null);
@@ -180,8 +181,8 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
       toast({ title: "Add names", description: "List at least one person to greet", variant: "destructive" });
       return;
     }
-    const normalizedPhone = normalizeUgandaPhone(phoneNumber);
-    if (!normalizedPhone) {
+    const normalizedPhone = paymentMethod === "mobile" ? normalizeUgandaPhone(phoneNumber) : (normalizeUgandaPhone(phoneNumber) || "");
+    if (paymentMethod === "mobile" && !normalizedPhone) {
       toast({ title: "Invalid phone number", description: "Please enter a valid Uganda phone number", variant: "destructive" });
       return;
     }
