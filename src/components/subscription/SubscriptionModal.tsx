@@ -272,9 +272,9 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
   }, [user, phoneNumber, stopPolling, agentOnly, agentName, agentBusiness, agentLocation]);
 
   const handlePayment = async () => {
-    const normalizedPhone = normalizeUgandaPhoneForPesapal(phoneNumber);
+    const normalizedPhone = paymentMethod === "card" ? "" : normalizeUgandaPhoneForPesapal(phoneNumber);
 
-    if (!normalizedPhone) {
+    if (paymentMethod === "mobile" && !normalizedPhone) {
       toast({ title: "Invalid phone number", description: "Please enter a valid Uganda phone number", variant: "destructive" });
       return;
     }
