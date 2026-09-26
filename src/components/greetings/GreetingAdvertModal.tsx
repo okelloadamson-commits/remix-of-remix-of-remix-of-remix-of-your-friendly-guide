@@ -293,10 +293,34 @@ export function GreetingAdvertModal({ open, onOpenChange }: GreetingAdvertModalP
                 ))}
               </div>
               <div>
-                <label className="text-sm font-medium">Phone Number (Mobile Money)</label>
-                <Input type="tel" placeholder="e.g. 0771234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="mt-1" />
-                <p className="text-xs text-muted-foreground mt-1">MTN MoMo or Airtel Money</p>
+                <label className="text-sm font-medium">Payment Method</label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("mobile")}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? "border-amber-500 bg-amber-500/10 text-amber-500" : "border-border text-muted-foreground hover:border-amber-500/50"}`}
+                  >
+                    Mobile Money
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("card")}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? "border-amber-500 bg-amber-500/10 text-amber-500" : "border-border text-muted-foreground hover:border-amber-500/50"}`}
+                  >
+                    Card
+                  </button>
+                </div>
               </div>
+              {paymentMethod === "mobile" && (
+                <div>
+                  <label className="text-sm font-medium">Phone Number (Mobile Money)</label>
+                  <Input type="tel" placeholder="e.g. 0771234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="mt-1" />
+                  <p className="text-xs text-muted-foreground mt-1">MTN MoMo or Airtel Money</p>
+                </div>
+              )}
+              {paymentMethod === "card" && (
+                <p className="text-xs text-muted-foreground">You will enter your card details securely on the Pesapal checkout page.</p>
+              )}
               <Button onClick={handlePay} className="w-full bg-amber-500 hover:bg-amber-600 text-white" size="lg">
                 Pay UGX 5,000
               </Button>
