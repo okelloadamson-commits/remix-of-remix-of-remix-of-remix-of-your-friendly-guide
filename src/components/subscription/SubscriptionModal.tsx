@@ -492,10 +492,34 @@ export function SubscriptionModal({ open, onOpenChange, agentOnly }: Subscriptio
                 <p className={`text-2xl font-bold ${accentClass}`}>UGX {selectedPlan.priceDisplay}</p>
               </div>
               <div>
-                <label className="text-sm font-medium">Phone Number (Mobile Money)</label>
-                <Input type="tel" placeholder="e.g. 0771234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="text-lg mt-1" autoFocus />
-                <p className="text-xs text-muted-foreground mt-1">Enter your MTN MoMo or Airtel Money number</p>
+                <label className="text-sm font-medium">Payment Method</label>
+                <div className="grid grid-cols-2 gap-2 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("mobile")}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "mobile" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-orange-500" : "border-primary bg-primary/10 text-primary") : "border-border text-muted-foreground hover:border-primary/50"}`}
+                  >
+                    Mobile Money
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("card")}
+                    className={`rounded-lg border-2 px-3 py-2 text-sm font-semibold transition-colors ${paymentMethod === "card" ? (isAgent ? "border-orange-500 bg-orange-500/10 text-orange-500" : "border-primary bg-primary/10 text-primary") : "border-border text-muted-foreground hover:border-primary/50"}`}
+                  >
+                    Card
+                  </button>
+                </div>
               </div>
+              {paymentMethod === "mobile" && (
+                <div>
+                  <label className="text-sm font-medium">Phone Number (Mobile Money)</label>
+                  <Input type="tel" placeholder="e.g. 0771234567" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} className="text-lg mt-1" autoFocus />
+                  <p className="text-xs text-muted-foreground mt-1">Enter your MTN MoMo or Airtel Money number</p>
+                </div>
+              )}
+              {paymentMethod === "card" && (
+                <p className="text-xs text-muted-foreground">You will enter your card details securely on the Pesapal checkout page.</p>
+              )}
               <Button onClick={handlePayment} className={`w-full ${isAgent ? "bg-orange-500 hover:bg-orange-600 text-white" : "gradient-primary"}`} size="lg">
                 Pay UGX {selectedPlan.priceDisplay}
               </Button>
