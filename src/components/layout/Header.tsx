@@ -85,19 +85,21 @@ export function Header() {
               <ThemeToggle />
 
               {/* Subscribe Button - Always visible */}
-              <Button
-                size="sm" 
-                className="bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white text-sm font-medium hidden sm:inline-flex"
-                onClick={() => {
-                  if (!user) {
-                    openAuth("login");
-                  } else {
-                    setSubscriptionOpen(true);
-                  }
-                }}
-              >
-                Subscribe
-              </Button>
+              <span className="subscribe-gradient-border hidden sm:inline-flex">
+                <Button
+                  size="sm"
+                  className="rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white text-sm font-medium"
+                  onClick={() => {
+                    if (!user) {
+                      openAuth("login");
+                    } else {
+                      setSubscriptionOpen(true);
+                    }
+                  }}
+                >
+                  Subscribe
+                </Button>
+              </span>
 
               {user ? (
                 <ProfileDropdown />
