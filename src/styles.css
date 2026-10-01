@@ -316,6 +316,37 @@
   100% { --search-angle: 360deg; }
 }
 
+/* Snake-around rainbow border for header Subscribe button */
+@property --subscribe-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes subscribe-snake-spin {
+  0% { --subscribe-angle: 0deg; }
+  100% { --subscribe-angle: 360deg; }
+}
+.subscribe-gradient-border {
+  position: relative;
+  display: inline-flex;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.subscribe-gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  padding: 2px;
+  background: conic-gradient(from var(--subscribe-angle), #ff3b6b, #ff5733, #ff9a1f, #ffd83d, #2ecc71, #1e90ff, #ff3b6b);
+  animation: subscribe-snake-spin 3s linear infinite;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+  z-index: 20;
+}
+
 /* Neon agent welcome popup — SVG stroke draw-in + rainbow hue cycle */
 @keyframes neon-hue-spin {
   0% { filter: url(#neon-glow) hue-rotate(0deg); }
