@@ -24,7 +24,6 @@ interface SubscriptionModalProps {
 }
 
 const plans = [
-  { duration: "1 Minute", price: 500, priceDisplay: "500", icon: Zap, dailyDownloads: 50 },
   { duration: "2 Days", price: 5000, priceDisplay: "5,000", icon: Zap, dailyDownloads: 50 },
   { duration: "1 Week", price: 10000, priceDisplay: "10,000", icon: Zap, dailyDownloads: 50 },
   { duration: "2 Weeks", price: 17000, priceDisplay: "17,000", icon: Star, dailyDownloads: 50 },

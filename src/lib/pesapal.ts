@@ -3,7 +3,6 @@
 
 // Plan duration mapping
 export const planDurations: Record<string, number> = {
-  "1 Minute": 1 / 1440, // 1 minute expressed in days
   "2 Days": 2,
   "1 Week": 7,
   "2 Weeks": 14,

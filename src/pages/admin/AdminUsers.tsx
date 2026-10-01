@@ -506,7 +506,7 @@ export default function AdminUsers() {
                 <SelectContent>
                   {PLANS.map((plan) => (
                     <SelectItem key={plan.name} value={plan.name}>
-                      {plan.name} {plan.days === -1 ? "(Lifetime)" : plan.days < 1 ? `(${Math.round(plan.days * 24 * 60)} minute${Math.round(plan.days * 24 * 60) === 1 ? "" : "s"})` : `(${plan.days} days)`}
+                      {plan.name} {plan.days === -1 ? "(Lifetime)" : `(${plan.days} days)`}
                     </SelectItem>
                   ))}
                 </SelectContent>
