@@ -85,7 +85,7 @@ export function Header() {
               <ThemeToggle />
 
               {/* Subscribe Button - Always visible */}
-              <span className="subscribe-gradient-border hidden sm:inline-flex">
+              <span className="subscribe-gradient-border hidden lg:inline-flex">
                 <Button
                   size="sm"
                   className="rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white text-sm font-medium"
